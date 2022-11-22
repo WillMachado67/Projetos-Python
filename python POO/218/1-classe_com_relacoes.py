@@ -49,7 +49,7 @@ class Motor:
 
 
 chevrolet = Factory('Chevrolet')
-wolkvagem = Factory('Wolksvagem')
+volkwagem = Factory('Volkswagem')
 toyota = Factory('Toyota')
 
 opala = Car('Opala')
@@ -57,7 +57,7 @@ gol = Car('Gol')
 corola = Car('Corola')
 
 opala.factory = chevrolet.name
-gol.factory = wolkvagem.name
+gol.factory = volkwagem.name
 corola.factory = toyota.name
 
 motor1 = Motor('1.0')
