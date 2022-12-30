@@ -13,11 +13,11 @@ class Account(ABC):
 
     @abstractmethod
     def withdraw(self, valor):
-        ...
+        raise NotImplementedError('Methodo withdraw nao foi impletado.')
 
     def deposit(self, valor):
         self._balance += valor
-        return f'Você depositou R${valor}'
+        return f'Você depositou R${valor}'.replace('.', ',')
 
 
 class CheckingAccount(Account):
@@ -26,26 +26,32 @@ class CheckingAccount(Account):
         self._limit = limit
 
     def __str__(self):
-        return f'Agencia: {self._agency} Nºconta: {self._account_number}\nSaldo: R${self._balance:.2f} Limite: R$-{self._limit}'
+        return f'Agencia: {self._agency} Nºconta: {self._account_number}\nSaldo: R${self._balance:.2f} Limite: R$-{self._limit}'.replace('.', ',')
 
-    def withdraw(self, valor):
-        if self._balance + self._limit >= valor:
-            self._balance -= valor
-            return f'Você sacou R${valor}'
+    def withdraw(self, valor, name, agency, account):
+        if banco.authentication(name, agency, account):
+            if self._balance + self._limit >= valor:
+                self._balance -= valor
+                return f'Você sacou R${valor:.2f}'.replace('.', ',')
+            else:
+                return 'Saldo insuficiente.'
         else:
-            return 'Saldo insuficiente.'
-
+            return 'Não foi possível autenticar a conta'
 
 class SavingsAccount(Account):
     def __str__(self):
-        return f'Agencia: {self._agency} Nºconta: {self._account_number}\nSaldo: R${self._balance}'
+        return f'Agencia: {self._agency} Nºconta: {self._account_number}\nSaldo: R${self._balance:.2f}'.replace('.', ',')
 
-    def withdraw(self, valor):
-        if self._balance >= valor:
-            self._balance -= valor
-            return f'Você sacou {valor}'
+    def withdraw(self, valor, name, agency, account):
+        if banco.authentication(name, agency, account):
+            if self._balance >= valor:
+                self._balance -= valor
+                return f'Você sacou {valor:.2f}'
+            else:
+                return 'Saldo insuficiente.'
         else:
-            return 'Saldo insuficiente.'
+            return 'Não foi possível autenticar a conta'
+
 
 
 class Person:
@@ -78,7 +84,6 @@ class Bank:
         self._clients = []
         self._accounts = []
 
-
     def create_checking_account(self, name, age, account):
         limit = 500
         _account = account
@@ -93,7 +98,8 @@ class Bank:
         self._clients.append(Client(name, age, new_account))
 
     def authentication(self, name, agency, account):
-        if name in [n for n in self._clients] and agency == self._agency and account in self._accounts:
+        client = next((c for c in self._clients if c.name == name), None)
+        if client and agency == self._agency and account in self._accounts:
             return True
         else:
             return False
@@ -103,7 +109,15 @@ if __name__ == '__main__':
     banco = Bank()
     banco.create_checking_account('Willian', 29, 678950)
     print(banco._clients[-1])
-    print
+    print()
     banco.create_savings_account('Suelen', 25, 123456)
     print(banco._clients[-1])
-    print(banco.authentication('Willian', 1234, 678950))
+    print()
+    print(banco._clients[0]._account.withdraw(200, "Willian", 1234, 678950))
+    print(banco._clients[0])
+    print()
+    print(banco._clients[0]._account.deposit(1500.58))
+    print(banco._clients[0])
+    print()
+    print(banco._clients[0]._account.withdraw(521.67, "Willian", 1234, 678950))
+    print(banco._clients[0])
