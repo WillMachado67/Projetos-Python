@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from random import randint
 
 
 class Account(ABC):
@@ -26,7 +25,9 @@ class CheckingAccount(Account):
         self._limit = limit
 
     def __str__(self):
-        return f'Agencia: {self._agency} Nºconta: {self._account_number}\nSaldo: R${self._balance:.2f} Limite: R$-{self._limit}'.replace('.', ',')
+        return f'Agencia: {self._agency} Nºconta: {self._account_number}\n'\
+            f'Saldo: R${self._balance:.2f} Limite: '\
+            f'R$-{self._limit}'.replace('.', ',')
 
     def withdraw(self, valor, name, agency, account):
         if banco.authentication(name, agency, account):
@@ -38,9 +39,11 @@ class CheckingAccount(Account):
         else:
             return 'Não foi possível autenticar a conta'
 
+
 class SavingsAccount(Account):
     def __str__(self):
-        return f'Agencia: {self._agency} Nºconta: {self._account_number}\nSaldo: R${self._balance:.2f}'.replace('.', ',')
+        return f'Agencia: {self._agency} Nºconta: {self._account_number}\n'\
+            f'Saldo: R${self._balance:.2f}'.replace('.', ',')
 
     def withdraw(self, valor, name, agency, account):
         if banco.authentication(name, agency, account):
@@ -51,7 +54,6 @@ class SavingsAccount(Account):
                 return 'Saldo insuficiente.'
         else:
             return 'Não foi possível autenticar a conta'
-
 
 
 class Person:
@@ -110,14 +112,12 @@ if __name__ == '__main__':
     banco.create_checking_account('Willian', 29, 678950)
     print(banco._clients[-1])
     print()
-    banco.create_savings_account('Suelen', 25, 123456)
-    print(banco._clients[-1])
-    print()
     print(banco._clients[0]._account.withdraw(200, "Willian", 1234, 678950))
     print(banco._clients[0])
-    print()
     print(banco._clients[0]._account.deposit(1500.58))
     print(banco._clients[0])
-    print()
     print(banco._clients[0]._account.withdraw(521.67, "Willian", 1234, 678950))
     print(banco._clients[0])
+    print()
+    banco.create_savings_account('Suelen', 25, 123456)
+    print(banco._clients[-1])
